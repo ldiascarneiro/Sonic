@@ -16,6 +16,8 @@ def test_api_auth_validation_and_hosts():
     assert client.post('/v1/games/answer', headers=headers, json={'token': 'forged', 'choice': '1'}).status_code == 400
     assert client.get('/health', headers={'Host': 'evil.example'}).status_code == 400
     assert client.get('/docs').status_code == 404
+    for removed_mode in ('colors', 'shapes', 'mixed'):
+        assert client.post('/v1/games', headers=headers, json={'mode': removed_mode}).status_code == 422
 
 
 def test_frontend_csrf_headers_and_limits():

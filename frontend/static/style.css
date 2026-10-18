@@ -66,3 +66,14 @@
   .steering-tip { display: none; }
   .race-status { min-height: 38px; font-size: 12px; }
 }
+
+/* Atividades numéricas e contagem: anéis estáticos em grupos de cinco. */
+.activity-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.activity-grid article { background: white; border: 1px solid var(--line); border-radius: 20px; padding: 20px; }
+.activity-grid h3 { font-size: 21px; }
+.activity-grid p { color: var(--muted); line-height: 1.5; }
+.activity-example { min-height: 65px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 36px; font-weight: 800; color: var(--blue); }
+.activity-example .ring { width: 27px; height: 34px; border-width: 5px; }
+.counting-rings { display: grid; grid-template-columns: repeat(5, 32px); justify-content: center; gap: 14px; margin: 20px auto; }
+.counting-rings .ring { width: 32px; height: 40px; border-width: 6px; }
+@media (max-width: 760px) { .activity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .activity-grid article { padding: 14px; } .activity-grid h3 { font-size: 18px; } .activity-grid p { font-size: 13px; } }

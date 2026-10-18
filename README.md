@@ -2,7 +2,7 @@
 
 Protótipo educativo **não oficial** para uma criança de 4 anos: Sonic corre em um
 percurso de três faixas: a criança usa ←/→ ou botões de toque para desviar de
-troncos, coletar anéis e somar pontos. Quizzes de números, cores e formas aparecem
+troncos, coletar anéis e somar pontos. Quizzes de números aparecem
 em paradas ao longo do caminho. Não há
 cronômetro, vidas, punições, cadastro ou publicidade. Cada aventura tem cinco descobertas.
 
@@ -66,13 +66,12 @@ Não há banco de dados nesta fase; o progresso fica em sessão temporária assi
 
 | Endereço | Finalidade |
 | --- | --- |
-| `/` | Escolher números, cores ou formas |
+| `/` | Iniciar a corrida com exercícios numéricos |
 | `/play` | Corrida e conclusão da aventura |
 | `/adults` | Guia para o adulto acompanhar a criança |
 | `/privacy` | Explicação sobre sessão, voz e privacidade |
 
-Toque em “Vamos correr” para uma aventura com temas misturados, ou escolha um tema
-nos cartões. Toque em “Correr”, use ←/→ ou os botões da tela. Cada anel vale 10 pontos;
+Toque em “Vamos correr” para uma aventura com quatro tipos de exercícios numéricos. Toque em “Correr”, use ←/→ ou os botões da tela. Cada anel vale 10 pontos;
 esbarrar apenas desacelera por um instante. Aproximadamente a cada 18 segundos de
 percurso, a pista pausa para um quiz, sem limite de tempo para responder. Cada
 descoberta vale 25 pontos. Após cinco descobertas, a aventura termina.
@@ -84,7 +83,8 @@ o progresso dos quizzes da sessão. A voz usa vozes locais em português dispon�
 ## Testes
 
 Os quizzes matemáticos trabalham reconhecimento de números de 1 a 50, sequências
-de três números com uma lacuna e apenas somas com resultado até 10. O reconhecimento
+de três números com uma lacuna, somas com resultado até 10 e contagem de 1 a 10 anéis,
+com três opções numéricas. O reconhecimento
 fala o número e mostra um modelo grande; a criança escolhe entre três opções.
 As somas mostram grupos de anéis para ajudar a contar. As perguntas variam entre
 aventuras e ficam estáveis após erros. Ao recarregar, sessões do conteúdo anterior

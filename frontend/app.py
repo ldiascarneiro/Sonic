@@ -81,7 +81,7 @@ def create_app() -> Flask:
 
     @app.get('/')
     def home():
-        return render_template('home.html', modes={key: value for key, value in MODES.items() if key != 'mixed'})
+        return render_template('home.html', modes=MODES)
 
     @app.post('/play')
     def start():
@@ -96,8 +96,8 @@ def create_app() -> Flask:
         game = session.get('game')
         if not game:
             return redirect(url_for('home'))
-        if game.get('curriculum') != 'preschool-v3':
-            game = api('/v1/games', {'mode': game['mode']})
+        if game.get('curriculum') != 'numbers-v4':
+            game = api('/v1/games', {'mode': 'numbers'})
             session['game'] = game
         return render_template('complete.html' if game['complete'] else 'play.html', game=game)
 

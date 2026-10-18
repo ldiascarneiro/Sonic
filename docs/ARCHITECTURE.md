@@ -40,7 +40,7 @@ Todas as rotas de jogo exigem `X-API-Key`. A API não é acessada pelo navegador
 | Rota | Entrada | Resultado |
 | --- | --- | --- |
 | `GET /health` | Nenhuma | `{"status":"ok"}` |
-| `POST /v1/games` | `{"mode":"mixed"}` (ou `numbers`, `colors`, `shapes`) | Estado e opções |
+| `POST /v1/games` | `{"mode":"numbers"}` | Estado e opções |
 | `POST /v1/games/answer` | `{"token":"…","choice":"…"}` | Novo estado e feedback |
 
 O estado retornado contém `token`, `mode`, `step`, `total`, `complete`, `feedback`,
@@ -67,11 +67,7 @@ formulário com CSRF ao Flask com `Accept: application/json`; Flask devolve o es
 e um fragmento Jinja `quiz_html`. Isso evita recarregar a corrida e perder pontos.
 Reenvios do token anterior devolvem o estado atual sem avançar novamente.
 
-O modo `mixed` alterna números, cores, formas, números e cores. Os modos anteriores
-selecionam o tema das perguntas, mas todos agora possuem corrida interativa.
-Anéis valem 10 pontos e acertos valem 25. A pontuação é local e recreativa; não é
-enviada como um resultado confiável à API nem persistida. Recarregar reinicia a
-simulação e a pontuação, preservando o progresso de quizzes na sessão.
+O único modo é `numbers`; cores, formas e o modo misto são rejeitados pela API.
 
 ## Interface
 
@@ -86,10 +82,10 @@ simulação e a pontuação, preservando o progresso de quizzes na sessão.
 
 `backend/math_quiz.py` gera reconhecimento e sequências de 1 a 50 e somas com
 resultado até 10, a partir de uma semente assinada. Os cinco desafios numéricos
-distribuem dois reconhecimentos, duas sequências e uma soma. A validação ocorre
-no servidor. A interface recebe o número modelo, a sequência com `null` na lacuna
-ou as parcelas, além de uma fala específica. Não recebe um campo de correção.
-O currículo `preschool-v3` reinicia sessões antigas ao abrir a pista; o novo salt
+distribuem um reconhecimento, duas sequências, uma soma e uma contagem de anéis (1 a 10), em ordem aleatória. A validação ocorre
+no servidor. A interface recebe o número modelo, a sequência com `null` na lacuna,
+as parcelas ou a quantidade de anéis a desenhar, além de uma fala específica. Não recebe um campo de correção.
+O currículo `numbers-v4` reinicia sessões antigas ao abrir a pista; o novo salt
 também rejeita tokens antigos. Assim não reaparecem subtrações ou números até 100.
 
 `game-audio.mjs` controla sons de anéis (osciladores Web Audio) e narração com

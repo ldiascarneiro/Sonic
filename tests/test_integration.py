@@ -10,7 +10,7 @@ from frontend.app import create_app
 from test_game import correct_choice
 
 
-@pytest.mark.parametrize('mode', ['numbers', 'colors', 'shapes', 'mixed'])
+@pytest.mark.parametrize('mode', ['numbers'])
 def test_browser_to_frontend_to_backend_flow(monkeypatch, mode):
     api_client = TestClient(create_api())
 
@@ -36,11 +36,12 @@ def test_browser_to_frontend_to_backend_flow(monkeypatch, mode):
     # Uma sessão anterior é reiniciada ao abrir a pista com o conteúdo infantil.
     with client.session_transaction() as session:
         previous = dict(session['game'])
-        previous.pop('curriculum')
+        previous['curriculum'] = 'preschool-v3'
+        previous['mode'] = 'colors'
         session['game'] = previous
     assert client.get('/play').status_code == 200
     with client.session_transaction() as session:
-        assert session['game']['curriculum'] == 'preschool-v3'
+        assert session['game']['curriculum'] == 'numbers-v4'
         assert session['game']['step'] == 0
     game = Game(os.environ['GAME_SECRET'])
     for step in range(5):
@@ -72,3 +73,19 @@ def test_backend_failure_is_friendly(monkeypatch):
     response = client.post('/play', data={'mode': 'numbers', 'csrf_token': csrf})
     assert response.status_code == 503
     assert b'Traceback' not in response.data
+
+
+@pytest.mark.parametrize('count', [1, 10])
+def test_counting_renders_exact_rings_and_three_choices(count):
+    from flask import render_template, session
+    app = create_app()
+    with app.test_request_context('/'):
+        session['csrf'] = 'test-only'
+        html = render_template('quiz.html', game={
+            'complete': False, 'exercise': 'counting', 'prompt': 'Quantos anéis você vê?',
+            'speech': 'Quantos anéis você vê?', 'ring_count': count, 'token': 'test-only',
+            'options': [{'kind': 'number', 'value': str(n), 'label': str(n)} for n in (1, 5, 10)],
+        })
+    assert html.count('aria-label="Anel"') == count
+    assert html.count('name="choice"') == 3
+    assert 'number-model' not in html

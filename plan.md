@@ -114,3 +114,16 @@ perguntas originais até terminar; voltar ao início e iniciar outra aplica a mu
 - [x] Documentar variáveis, rede privada, domínio e Wait for CI.
 - [x] Verificar localmente: 18 testes Python, 10 JavaScript, `pip check` e sintaxe JSON.
 - [ ] Executar o build Docker/CI e validar o deploy real, HTTPS e rede privada no Railway.
+
+## Exercícios somente de números — versão atual
+
+- [x] Remover cores e formas da interface, geração e contratos da API.
+- [x] Manter somas até 10, sequências e reconhecimento até 50.
+- [x] Acrescentar contagem de 1 a 10 anéis estáticos, com três alternativas numéricas.
+- [x] Garantir os quatro tipos por aventura de cinco descobertas.
+- [x] Migrar sessões anteriores para `numbers-v4` e rejeitar tokens antigos.
+- [x] Validar 14 testes Python (incluindo 500 perguntas) e 10 testes JavaScript.
+- [x] Conferir templates renderizados em Chrome headless: 360 e 1280 px, foco via Tab,
+  movimento reduzido, dez anéis e três respostas com alvos maiores que 48 px.
+- [ ] Validar a nova versão no Railway e em celular físico; a conferência local de
+  layout usou templates estáticos, sem executar a corrida no navegador.

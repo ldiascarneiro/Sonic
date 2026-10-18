@@ -1,0 +1,24 @@
+{% if not game.complete %}
+<h2 id="instruction" tabindex="-1" data-speech="{{ game.speech or game.prompt }}">{{ game.prompt }}</h2>
+{% if game.exercise == 'recognition' %}
+<div class="number-model" aria-label="Número modelo: {{ game.model_number }}">{{ game.model_number }}</div>
+{% elif game.exercise == 'sequence' %}
+<div class="number-sequence" aria-label="{{ game.speech }}">{% for number in game.sequence %}<span class="sequence-tile {% if number is none %}missing-number{% endif %}">{{ '?' if number is none else number }}</span>{% endfor %}</div>
+{% elif game.exercise == 'addition' %}
+<div class="addition-model" aria-label="{{ game.prompt }}">{% for count in game.addends %}{% if not loop.first %}<span aria-hidden="true">+</span>{% endif %}<span class="addition-group" aria-label="{{ count }} anéis"><strong>{{ count }}</strong><span class="addition-rings" aria-hidden="true">{% for n in range(count) %}<i class="ring"></i>{% endfor %}</span></span>{% endfor %}<span aria-hidden="true">= ?</span></div>
+{% endif %}
+<button class="listen" type="button" id="listen" hidden>♫ Ouvir a pergunta</button>
+<form action="{{ url_for('answer') }}" method="post" class="answer-form" id="answers">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf }}"><input type="hidden" name="round_token" value="{{ game.token }}">
+  <fieldset><legend class="sr-only">{{ game.prompt }}</legend><div class="answers">
+  {% for option in game.options %}
+    <button type="submit" name="choice" value="{{ option.value }}" class="answer answer-{{ option.kind }}" aria-label="{{ option.label }}{% if option.kind == 'rings' %} anéis{% endif %}">
+      {% if option.kind == 'rings' %}<span class="answer-rings" aria-hidden="true">{% for n in range(option.count) %}<i class="ring"></i>{% endfor %}</span><span>{{ option.label }}</span>
+      {% elif option.kind == 'number' %}<span class="number-choice">{{ option.label }}</span>
+      {% elif option.kind == 'colors' %}<span class="paint paint-{{ option.value }}" aria-hidden="true"></span><span>{{ option.label }}</span>
+      {% else %}<span class="shape {{ option.value }}" aria-hidden="true"></span><span>{{ option.label }}</span>{% endif %}
+    </button>
+  {% endfor %}
+  </div></fieldset>
+</form>
+{% endif %}

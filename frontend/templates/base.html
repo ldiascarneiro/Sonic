@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2154e8">
+  <title>{% block title %}Sonic · Aprender brincando{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('static', filename='sonic.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  {% block scripts %}{% endblock %}
+</head>
+<body>
+  <a class="skip" href="#main">Ir para o conteúdo</a>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="{{ url_for('home') }}" aria-label="Sonic, início"><span class="brand-icon">S</span><span>SONIC<small>APRENDER BRINCANDO</small></span></a>
+      <nav aria-label="Menu principal"><a class="adult-link" href="{{ url_for('adults') }}"><span aria-hidden="true">☼</span> Para adultos</a></nav>
+    </header>
+    <main id="main">{% block content %}{% endblock %}</main>
+    <footer><span>Pequenas descobertas. Grandes aventuras.</span><a href="{{ url_for('privacy') }}">Privacidade</a><span class="prototype">Protótipo educativo · não oficial</span></footer>
+  </div>
+</body>
+</html>

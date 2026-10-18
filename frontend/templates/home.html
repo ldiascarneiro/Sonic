@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow"><span class="status-dot"></span> UMA AVENTURA PARA PEQUENOS EXPLORADORES</span>
+    <h1>Correr, brincar.<br><span>E descobrir!</span></h1>
+    <p>Desvie dos obstáculos e pegue os anéis!<br class="desktop-break"> Pelo caminho, descubra números, cores e formas.</p>
+    <form action="{{ url_for('start') }}" method="post"><input type="hidden" name="csrf_token" value="{{ session.csrf }}"><input type="hidden" name="mode" value="mixed"><button class="primary hero-cta" type="submit">Vamos correr <span aria-hidden="true">↗</span></button></form>
+    <div class="hero-notes"><span>✦ A partir de 4 anos</span><span>♡ Com um adulto por perto</span></div>
+  </div>
+  <div class="hero-world" aria-label="Sonic correndo por colinas verdes em direção a anéis dourados" role="img">
+    <div class="sun"></div><div class="cloud cloud-one"></div><div class="cloud cloud-two"></div>
+    <span class="floating-star star-one">✦</span><span class="floating-star star-two">✧</span>
+    <div class="hill hill-back"></div><div class="hill hill-front"></div>
+    <div class="hero-rings" aria-hidden="true"><i class="ring"></i><i class="ring"></i><i class="ring"></i></div>
+    <img class="hero-sonic" src="{{ url_for('static', filename='sonic.svg') }}" alt="">
+    <div class="world-ground"></div><div class="world-label">PRÓXIMA PARADA: UMA DESCOBERTA!</div>
+  </div>
+</section>
+<section class="adventures" id="adventures" aria-labelledby="adventure-title">
+  <div class="section-heading"><div><span class="eyebrow">ESCOLHA UM CAMINHO</span><h2 id="adventure-title">O que vamos descobrir?</h2></div><span class="little-note">Uma brincadeira de cada vez <span aria-hidden="true">↙</span></span></div>
+  <div class="adventure-grid">
+    {% for key, mode in modes.items() %}
+    <form class="adventure-card card-{{ key }}" action="{{ url_for('start') }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf }}"><input type="hidden" name="mode" value="{{ key }}">
+      <div class="card-art" aria-hidden="true">{% if key == 'numbers' %}<span class="number-art">1 <i class="ring"></i> 3</span>{% elif key == 'colors' %}<span class="color-bubble bubble-red"></span><span class="color-bubble bubble-yellow"></span><span class="color-bubble bubble-blue"></span>{% else %}<span class="shape circle"></span><span class="shape triangle"></span><span class="shape square"></span>{% endif %}</div>
+      <span class="card-category">{% if key == 'numbers' %}NÚMEROS{% elif key == 'colors' %}CORES{% else %}FORMAS{% endif %}</span>
+      <h3>{{ mode.title }}</h3><p>{{ mode.subtitle }}</p>
+      <button class="card-button" type="submit">Brincar <span aria-hidden="true">→</span><span class="sr-only">: {{ mode.title }}</span></button>
+    </form>
+    {% endfor %}
+  </div>
+</section>
+<aside class="gentle-note"><span class="note-icon" aria-hidden="true">♡</span><div><strong>Aqui, aprender é uma brincadeira.</strong><p>Sem pressa, sem perder vidas. Cada tentativa é uma nova descoberta.</p></div><span class="note-doodle" aria-hidden="true">✦</span></aside>
+{% endblock %}

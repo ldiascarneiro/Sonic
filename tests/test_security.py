@@ -47,3 +47,22 @@ def test_wildcard_host_rejected(monkeypatch):
     monkeypatch.setenv('FRONTEND_HOSTS', '*')
     with pytest.raises(RuntimeError):
         create_app()
+
+
+def test_railway_health_hosts_and_no_player_session(monkeypatch):
+    monkeypatch.setenv('APP_ENV', 'production')
+    monkeypatch.setenv('FRONTEND_HOSTS', 'sonic.example,healthcheck.railway.app')
+    monkeypatch.setenv('BACKEND_HOSTS', 'backend.railway.internal,healthcheck.railway.app')
+    client = create_app().test_client()
+    response = client.get('/health', base_url='https://healthcheck.railway.app')
+    assert response.status_code == 200
+    assert response.json == {'status': 'ok'}
+    assert 'Set-Cookie' not in response.headers
+    assert response.headers['Cache-Control'] == 'no-store'
+    assert 'Content-Security-Policy' in response.headers
+    assert client.get('/health', base_url='https://evil.example').status_code == 400
+    assert client.post('/play', base_url='https://sonic.example', data={'mode': 'numbers'}).status_code == 400
+    api = TestClient(create_api())
+    assert api.get('/health', headers={'Host': 'healthcheck.railway.app'}).status_code == 200
+    assert api.get('/health', headers={'Host': 'evil.example'}).status_code == 400
+    assert api.post('/v1/games', headers={'Host': 'backend.railway.internal'}, json={'mode': 'numbers'}).status_code == 401

@@ -110,6 +110,14 @@ atualizações antes de gerar um novo lock. A instalação não inclui assets ex
 
 ## Configuração e publicação futura
 
+Para Railway, usar dois serviços (frontend público e backend privado), com os
+arquivos `deploy/railway.frontend.json` e `deploy/railway.backend.json`.
+O [passo a passo de implantação](docs/DEPLOYMENT.md) explica diretório raiz,
+variáveis, domínio, healthchecks e autodeploy. O build usa `deploy/Dockerfile`,
+Python 3.12 e dependências fixadas. O workflow GitHub Actions executa testes e
+build da imagem; habilitar **Wait for CI** no Railway para bloquear deploys com falha.
+Essa configuração foi preparada no repositório; o deploy remoto ainda deve ser validado.
+
 `scripts/setup.py` gera segredos diferentes para sessão, API e tokens do jogo.
 O script preserva qualquer `.env` existente. Nunca publique esse arquivo.
 

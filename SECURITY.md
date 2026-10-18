@@ -27,6 +27,13 @@ A proteção contra tráfego abusivo e requisições lentas depende do proxy e d
 infraestrutura. `deploy/nginx.conf.example` fornece limites de tamanho e taxa.
 Não há garantia de proteção contra DDoS. O servidor da API deve permanecer privado.
 
+No Railway, somente o frontend recebe domínio público. O backend usa a rede
+privada do mesmo ambiente. A imagem roda sem privilégios; os segredos são variáveis
+de runtime e não entram no build. O Nginx de exemplo não faz parte dessa imagem:
+limites de tráfego e política de logs precisam ser configurados na infraestrutura.
+As sondas `/health` preservam a validação de hosts; autorizar explicitamente
+`healthcheck.railway.app` nas variáveis de hosts. O frontend não cria sessão nessa rota.
+
 O guia para adultos é público e informativo; não protege configurações sensíveis.
 A versão atual não possui configurações administrativas mutáveis.
 

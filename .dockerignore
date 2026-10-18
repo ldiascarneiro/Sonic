@@ -1,0 +1,13 @@
+**
+!requirements-lock.txt
+!deploy/
+!deploy/Dockerfile
+!frontend/
+!frontend/**
+!backend/
+!backend/**
+!shared/
+!shared/**
+**/__pycache__/
+**/*.pyc
+**/.env

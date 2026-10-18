@@ -1,4 +1,97 @@
-# Implantação futura em servidor web
+# Implantação no Railway ou servidor próprio
+
+## Railway: configuração inicial
+
+Os arquivos de implantação estão preparados; o deploy remoto ainda não foi
+executado. Criar dois serviços, `frontend` e `backend`, no mesmo projeto e ambiente,
+ligados ao repositório GitHub e à branch `main`. Usar um ambiente novo com rede
+privada IPv4/IPv6 (ambientes anteriores a 16/10/2025 podem exigir IPv6).
+
+Em ambos, manter **Root Directory** na raiz (`/`), pois os serviços importam
+`shared/`. Em Settings, definir **Railway Config File**:
+
+| Serviço | Arquivo de configuração | Exposição |
+| --- | --- | --- |
+| frontend | `/deploy/railway.frontend.json` | Domínio público HTTPS |
+| backend | `/deploy/railway.backend.json` | Somente rede privada; sem domínio público nem TCP proxy |
+
+O Dockerfile compartilhado usa Python 3.12, instala `requirements-lock.txt` e
+executa como usuário 10001, sem privilégios. A versão menor do Python está fixa;
+patches e a imagem base podem mudar nos rebuilds. O contexto Docker exclui `.env`,
+`.git`, ambiente virtual e arquivos não necessários. Não configurar build/start
+commands adicionais no painel: os arquivos JSON definem os comandos por serviço.
+Não usar `scripts/run_local.py` no Railway.
+
+### Variáveis
+
+Cadastrar os valores em Variables antes de iniciar os serviços. Gerar três
+segredos aleatórios diferentes, com pelo menos 32 caracteres, mantendo os mesmos
+valores entre deploys. Para gerar um valor localmente no PowerShell:
+
+```powershell
+.\.venv\Scripts\python.exe -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+Executar três vezes e guardar os resultados somente no gestor de variáveis.
+Não usar `scripts/setup.py` no build nem enviar `.env` para o GitHub.
+
+| Variável | frontend | backend |
+| --- | --- | --- |
+| `APP_ENV` | `production` | `production` |
+| `PORT` | `8080` | `8080` |
+| `SECRET_KEY` | Primeiro segredo | Não necessário |
+| `API_KEY` | Mesmo segundo segredo | Segundo segredo |
+| `GAME_SECRET` | Não necessário | Terceiro segredo |
+| `FRONTEND_HOSTS` | `SEU-DOMINIO.up.railway.app,healthcheck.railway.app` | Não necessário |
+| `BACKEND_HOSTS` | Não necessário | `backend.railway.internal,healthcheck.railway.app` |
+| `BACKEND_URL` | `http://backend.railway.internal:8080` | Não necessário |
+
+Substituir o domínio público e o hostname privado pelos valores reais mostrados
+em Networking. Hosts não levam protocolo, porta ou caminho; não usar curingas.
+Se renomear o backend ou alterar sua porta, atualizar também `BACKEND_URL`.
+O `API_KEY` pode ser uma variável compartilhada referenciada nos dois serviços.
+
+Criar domínio somente no frontend, com target port 8080. O TLS é terminado na
+borda do Railway; o HTTP interno permanece na rede privada. O navegador chama
+somente o frontend. Não é necessário habilitar CORS nem `ProxyFix`.
+
+### Saúde e deploy automático
+
+Os dois arquivos configuram `/health`, timeout de 300 segundos e até cinco
+reinícios em falha. O hostname `healthcheck.railway.app` precisa estar explicitamente
+autorizado. A sonda do frontend não cria cookies e verifica somente o processo
+Flask, sem chamar o backend; um healthcheck verde não comprova a jornada completa.
+O Railway verifica a saúde durante o deploy, não como monitor contínuo.
+
+Subir o backend primeiro e depois o frontend. Em cada serviço, habilitar autodeploy
+da branch `main`. O workflow `.github/workflows/tests.yml` executa pytest, testes
+JavaScript, `pip check` e build Docker no Linux. Habilitar **Wait for CI** nos dois
+serviços após conectar o GitHub e conceder as permissões exigidas. Sem essa opção,
+os testes não bloqueiam o deploy. Commits locais precisam chegar ao GitHub para
+disparar o workflow e o Railway.
+
+Não são necessários banco de dados ou volumes. Sessões permanecem temporárias;
+rotacionar os segredos invalida sessões ou aventuras existentes.
+
+### Verificação no ambiente real
+
+- Confirmar os dois deploys saudáveis e o frontend acessível por HTTPS.
+- Completar uma aventura: isso verifica URL privada, chave e comunicação Flask/API.
+- Conferir cookies Secure/HttpOnly/SameSite, CSP e HSTS no navegador.
+- Confirmar que o backend não tem domínio público nem TCP proxy.
+- Configurar limites de tráfego/conexões e retenção de logs na infraestrutura:
+  o Nginx de exemplo abaixo não é executado por esta imagem Docker.
+- Validar reinício, indisponibilidade da API, desktop, celular, teclado e movimento reduzido.
+- Aplicar os demais requisitos de `SECURITY.md` antes da divulgação pública.
+
+Referências oficiais: [monorepos](https://docs.railway.com/deployments/monorepo),
+[configuração como código](https://docs.railway.com/config-as-code/reference),
+[comandos Docker e expansão de variáveis](https://docs.railway.com/deployments/start-command),
+[rede privada](https://docs.railway.com/networking/private-networking/how-it-works),
+[healthchecks](https://docs.railway.com/deployments/healthchecks) e
+[autodeploy e Wait for CI](https://docs.railway.com/deployments/github-autodeploys).
+
+## Alternativa: servidor próprio com Nginx
 
 Este guia é uma base de configuração. Nenhum servidor externo foi configurado ou
 publicado nesta entrega. Os valores de domínio e certificados são exemplos e

@@ -46,6 +46,9 @@ def create_app() -> Flask:
 
     @app.before_request
     def csrf_guard():
+        # A sonda não cria nem renova uma sessão de jogador.
+        if request.endpoint == 'health':
+            return
         session.permanent = True
         if 'csrf' not in session:
             session['csrf'] = secrets.token_urlsafe(32)
@@ -70,6 +73,11 @@ def create_app() -> Flask:
         if is_production:
             response.headers['Strict-Transport-Security'] = 'max-age=31536000'
         return response
+
+    @app.get('/health')
+    def health():
+        # Saúde deste processo; a disponibilidade da API é verificada separadamente.
+        return jsonify(status='ok')
 
     @app.get('/')
     def home():

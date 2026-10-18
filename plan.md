@@ -104,3 +104,13 @@ perguntas originais até terminar; voltar ao início e iniciar outra aplica a mu
 - [x] Retirar subtração, comparação e perguntas até 100 das novas sessões.
 - [x] Reiniciar sessões antigas ao abrir a pista, evitando conteúdo incompatível.
 - [x] Verificar 500 perguntas e integração dos quatro modos: 17 testes aprovados.
+
+## Preparação para Railway
+
+- [x] Configurar frontend e backend como serviços separados, com Docker e usuário sem privilégios.
+- [x] Fixar Python 3.12 e instalar dependências pelo lock existente.
+- [x] Adicionar healthcheck do frontend sem sessão, preservando hosts e cabeçalhos.
+- [x] Adicionar CI para testes Python/JavaScript, dependências e build Docker.
+- [x] Documentar variáveis, rede privada, domínio e Wait for CI.
+- [x] Verificar localmente: 18 testes Python, 10 JavaScript, `pip check` e sintaxe JSON.
+- [ ] Executar o build Docker/CI e validar o deploy real, HTTPS e rede privada no Railway.

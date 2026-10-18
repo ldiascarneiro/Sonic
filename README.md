@@ -10,7 +10,10 @@ cronômetro, vidas, punições, cadastro ou publicidade. Cada aventura tem cinco
 Python fornece páginas, perguntas, validação e sessão. JavaScript é necessário
 para controles, canvas, colisões e pontuação imediata, sem frameworks adicionais.
 
-## Rodar nesta máquina
+## Link experimental
+https://sonic-production-4229.up.railway.app/play
+
+## Rodar na máquina
 
 O ambiente `.venv` e o `.env` já foram preparados durante a implementação.
 No PowerShell, dentro da pasta do projeto:

@@ -1,11 +1,10 @@
-// Bola de espinhos durante o salto; sem rotação com movimento reduzido.
+// Cambalhota para a frente: eixo horizontal, perpendicular à direção da pista.
 export function drawSonicBall(ctx, {x, ground, progress, reduced = false}) {
   const height = Math.sin(Math.PI * progress) * (reduced ? 65 : 125);
   ctx.save();
   ctx.fillStyle = '#25465d33';
   ctx.beginPath(); ctx.ellipse(x, ground + 2, 38 - height * .1, 8, 0, 0, Math.PI * 2); ctx.fill();
   ctx.translate(x, ground - 48 - height);
-  if (!reduced) ctx.rotate(progress * Math.PI * 4);
   ctx.fillStyle = '#1554d6'; ctx.strokeStyle = '#123fa9'; ctx.lineWidth = 3;
   ctx.beginPath();
   for (let i = 0; i < 24; i++) {
@@ -16,18 +15,34 @@ export function drawSonicBall(ctx, {x, ground, progress, reduced = false}) {
   }
   ctx.closePath(); ctx.fill(); ctx.stroke();
   ctx.fillStyle = '#2475f2'; ctx.beginPath(); ctx.arc(0, 0, 35, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#8cbeff'; ctx.lineWidth = 5;
-  ctx.beginPath(); ctx.arc(0, 0, 24, -.8, 2.2); ctx.stroke();
-  ctx.strokeStyle = '#1554d6';
-  ctx.beginPath(); ctx.arc(0, 0, 13, 1, 4.8); ctx.stroke();
+  // Projeta faixas da superfície de uma esfera girando em torno do eixo X.
+  // Na face visível elas sobem, passam pelo topo e somem atrás da bola.
+  // Não rotacionar o canvas: isso faria a bola girar de lado como uma roda.
+  const spin = reduced ? .3 : progress * Math.PI * 4;
+  for (let band = 0; band < 6; band++) {
+    const angle = spin + band * Math.PI / 3;
+    const depth = Math.cos(angle);
+    if (depth <= 0) continue;
+    ctx.strokeStyle = band % 2 ? '#1554d6' : '#8cbeff';
+    ctx.globalAlpha = .35 + depth * .65;
+    ctx.lineWidth = 2 + depth * 4;
+    ctx.beginPath();
+    for (let sample = 0; sample <= 32; sample++) {
+      const px = -33 + sample * 66 / 32;
+      const radius = Math.sqrt(35 * 35 - px * px);
+      const py = -radius * Math.sin(angle);
+      if (sample === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
   ctx.restore();
 }
 
 // Personagem vetorial articulado, visto de costas. Sem imagens externas.
 export function drawSonicRunner(ctx, {x, ground, time, lean = 0, reduced = false}) {
-  const cycle = reduced ? 0 : time * 14;
-  const stride = Math.sin(cycle);
-  const bounce = reduced ? 0 : Math.abs(Math.cos(cycle)) * 4;
+  const cycle = reduced ? 0 : time * 10;
+  const bounce = reduced ? 0 : (1 - Math.cos(cycle * 2)) * 1.5;
   const oval = (cx, cy, rx, ry, color) => {
     ctx.fillStyle = color;
     ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
@@ -58,24 +73,39 @@ export function drawSonicRunner(ctx, {x, ground, time, lean = 0, reduced = false
   ctx.translate(0, -bounce);
   ctx.rotate(reduced ? 0 : lean + Math.sin(cycle) * .025);
 
-  // Pernas alternadas: um pé apoia, o outro sobe mostrando a sola.
+  // Apoio percorre o chão; recuperação dobra o joelho e traz o calcanhar
+  // para trás. A projeção cresce ao se aproximar da câmera, sem abrir as pernas.
   for (const side of [-1, 1]) {
-    const swing = stride * side;
-    const lift = Math.max(0, swing) * 28;
-    const footX = side * (21 + Math.max(0, -swing) * 5);
-    const footY = -5 - lift;
-    limb([[side * 14, -58], [side * 20, -31 - lift * .45], [footX, footY - 10]], '#1554cf', 13);
-    ctx.save(); ctx.translate(footX, footY); ctx.rotate(side * (.10 + swing * .10));
-    oval(0, -6, 16, 22 - lift * .12, '#be253f');
+    const phase = cycle + (side === 1 ? Math.PI : 0);
+    const recovery = reduced ? 0 : Math.max(0, Math.sin(phase));
+    // No apoio (segunda metade), o pé vai do fundo da pista para a câmera.
+    // Na recuperação, volta ao fundo no ar; inverter isso sugere andar de ré.
+    const travel = reduced ? 0 : -Math.cos(phase);
+    const lift = recovery * recovery * 30;
+    const footX = side * (20 + recovery * 2);
+    const footY = -7 - lift - travel * 12 + bounce;
+    const kneeY = -34 - recovery * 5 - travel * 4;
+    limb([[side * 14, -58], [side * 18, kneeY], [footX, footY - 12]], '#1554cf', 12);
+    ctx.save(); ctx.translate(footX, footY); ctx.rotate(side * .06);
+    const scale = 1 - travel * .10;
+    ctx.scale(scale, scale);
+    oval(0, -6, 16, 19, '#be253f');
     path('M-16 -12 Q0 -20 16 -12 L17 4 Q0 13 -17 4 Z', '#f34750', '#aa2639');
     path('M-17 3 Q0 10 17 3 L16 10 Q0 17 -16 10 Z', '#f5f7ff');
     path('M-5 -19 L5 -19 L6 7 L-6 7 Z', '#fff');
     oval(0, -22, 13, 6, '#f6f9ff');
-    if (lift > 5) {
-      oval(0, 2, 13, 8 + lift * .12, '#34476b');
-      limb([[-8, 2], [8, 2]], '#8290a7', 2);
-      limb([[-6, 7], [6, 7]], '#8290a7', 2);
+    // A sola vira para quem olha quando o calcanhar sobe; a borda branca
+    // e os sulcos tornam a orientação legível também no celular.
+    ctx.save();
+    ctx.translate(0, 6 - recovery * 9);
+    ctx.scale(1, .16 + recovery * .84);
+    oval(0, 0, 16, 22, '#f5f7ff');
+    oval(0, 0, 12.5, 18, '#34476b');
+    for (const y of [-10, -3, 4, 11]) {
+      const width = Math.abs(y) > 8 ? 7 : 9;
+      limb([[-width, y - 1], [0, y + 1], [width, y - 1]], '#a7b8cc', 2.5);
     }
+    ctx.restore();
     ctx.restore();
   }
 
@@ -86,7 +116,7 @@ export function drawSonicRunner(ctx, {x, ground, time, lean = 0, reduced = false
 
   // Braços em oposição às pernas, com luvas brancas visíveis dos dois lados.
   for (const side of [-1, 1]) {
-    const pump = -stride * side;
+    const pump = reduced ? 0 : Math.cos(cycle) * side;
     const handY = -68 + pump * 15;
     const handX = side * (44 + pump * 3);
     limb([[side * 24, -98], [side * 40, -83 + pump * 6], [handX, handY]], '#b9805b', 11);

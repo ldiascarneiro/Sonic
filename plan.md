@@ -68,7 +68,13 @@ válidos os critérios de segurança, interface infantil e cinco descobertas.
 
 ## Personagem e animação de corrida
 
+- [x] Corrigir o sentido da passada: pé apoiado acompanha o chão em direção à
+  câmera, recupera no ar rumo ao fundo e alterna com o braço oposto.
 - [x] Desenhar Sonic de costas, voltado para o fundo da pista.
+- [x] Refinar passada com apoio e recuperação, flexão dos joelhos e sola com sulcos
+  voltada à câmera ao levantar o calcanhar; manter pose estática com movimento reduzido.
+- [x] Conferir poses da passada no Chrome e controles em 1280 e 360 px; 14 testes
+  Python e 13 JavaScript aprovados após o ajuste das pernas e dos tênis.
 - [x] Articular pernas e braços em oposição, com elevação dos pés e leve balanço.
 - [x] Suavizar troca de faixa e inclinar o corpo durante o deslocamento.
 - [x] Congelar a pose durante pausas e reduzir efeitos conforme a preferência do sistema.
@@ -130,9 +136,11 @@ perguntas originais até terminar; voltar ao início e iniciar outra aplica a mu
 
 ## Salto em bola
 
-- [x] Espaço na pista e botão Pular no toque iniciam salto de um segundo.
+- [x] Seta para cima ou Espaço na pista e botão Pular no toque iniciam salto de um segundo.
 - [x] Bola passa sobre troncos e anéis sem coletar objetos no ar.
 - [x] Sem pulo duplo; respeita pausas, quizzes e movimento reduzido.
+- [x] Corrigir giro para uma cambalhota no sentido da pista: faixas da superfície
+  giram em torno do eixo horizontal, sem rotação lateral do canvas.
 - [x] Validar 14 testes Python e 13 JavaScript, incluindo pouso e passagem sobre objetos.
 - [x] Verificar no Chrome local em 1280 e 360 px: Espaço, botão Pular, pausa/retomada,
   movimento reduzido, ausência de erros JavaScript e alvos de toque de pelo menos 48 px.

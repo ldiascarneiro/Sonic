@@ -129,3 +129,12 @@ os cookies funcionem. Não use `APP_ENV=production` no teste local em HTTP.
 Sonic é propriedade dos respectivos titulares. O SVG local foi desenhado para este
 protótipo, sem extração de imagens dos jogos. Antes da publicação, revise o uso do
 personagem ou substitua-o por um personagem original.
+
+## Salto durante a corrida
+
+Com a pista em foco, pressione **Espaço** ou toque em **Pular**. Sonic se enrola
+em uma bola durante um segundo e passa sobre troncos e anéis; anéis pulados não
+são coletados. É possível trocar de faixa no ar. Não há pulo duplo nem repetição
+automática ao segurar Espaço. Pausas e quizzes congelam o salto; um novo trecho
+começa no chão. Movimento reduzido remove a rotação e diminui a altura visual,
+sem mudar a duração ou as colisões. Desviar com as setas continua suficiente.

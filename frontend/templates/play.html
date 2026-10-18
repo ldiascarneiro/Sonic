@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 {% block title %}{{ game.title }} · Sonic{% endblock %}
-{% block scripts %}<script type="module" src="{{ url_for('static', filename='runner.js', v='4') }}"></script>{% endblock %}
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='runner.js', v='5') }}"></script>{% endblock %}
 {% block content %}
 <section class="game runner-game" id="runner-game" data-step="{{ game.step }}" data-total="{{ game.total }}" data-sonic="{{ url_for('static', filename='sonic.svg') }}">
   <div class="game-toolbar"><a class="secondary" href="{{ url_for('home') }}">⌂ Início</a><span class="game-label">{{ game.title }}</span><button class="secondary" id="sound-toggle" type="button" aria-pressed="true" aria-label="Desligar o som">🔊 Som ligado</button><button class="secondary" id="pause" type="button" disabled>Ⅱ Pausar</button></div>
   <div class="race-hud"><span>◎ <strong id="ring-count">0</strong> anéis</span><span>★ <strong id="score">0</strong> pontos</span><span>✦ <strong id="discoveries">{{ game.step }}</strong>/{{ game.total }} descobertas</span></div>
   <div class="runner-stage">
-    <canvas id="race" width="900" height="560" tabindex="0" aria-label="Pista de três faixas. Use as setas esquerda e direita para desviar e coletar anéis.">A corrida precisa de JavaScript. Ative-o para jogar.</canvas>
-    <div class="race-overlay" id="ready"><div class="race-panel"><span class="eyebrow">PRONTO PARA A AVENTURA?</span><h1>Vamos correr!</h1><p>Use <strong>← e →</strong> para trocar de caminho.<br>Pegue os anéis e desvie dos troncos!</p><p class="small">A corrida faz uma pausa para pequenas descobertas.</p><button class="primary" type="button" id="start-run" disabled>Carregando…</button></div></div>
+    <canvas id="race" width="900" height="560" tabindex="0" aria-label="Pista de três faixas. Use as setas esquerda e direita para desviar e coletar anéis. Espaço para pular.">A corrida precisa de JavaScript. Ative-o para jogar.</canvas>
+    <div class="race-overlay" id="ready"><div class="race-panel"><span class="eyebrow">PRONTO PARA A AVENTURA?</span><h1>Vamos correr!</h1><p>Use <strong>← e →</strong> para trocar de caminho.<br>Pegue os anéis e desvie dos troncos!<br><strong>Espaço</strong> ou <strong>Pular</strong>: vire uma bola e salte.</p><p class="small">A corrida faz uma pausa para pequenas descobertas.</p><button class="primary" type="button" id="start-run" disabled>Carregando…</button></div></div>
     <div class="race-overlay" id="paused" hidden><div class="race-panel"><h2>Uma pausa para respirar ♡</h2><button class="primary" id="resume" type="button">▶ Continuar</button></div></div>
     <div class="race-overlay" id="checkpoint" hidden><div class="race-panel quiz-panel"><span class="eyebrow">PARADA DA DESCOBERTA · A CORRIDA ESTÁ PAUSADA</span><div id="quiz-content">{% include 'quiz.html' %}</div><canvas id="sonic-cheer" width="360" height="240" role="img" aria-label="Sonic sorrindo e fazendo um sinal de joia para você" hidden></canvas><p id="quiz-feedback" role="status"></p><p id="voice-notice" class="game-hint" role="status" hidden></p><button class="primary" id="continue-run" type="button" hidden>Continuar correndo →</button></div></div>
     <div class="race-overlay" id="finished" hidden><div class="race-panel"><span class="eyebrow">AVENTURA COMPLETA</span><h1>Você conseguiu!</h1><p id="final-score"></p><p>Agora, que tal beber água e descansar?</p><a class="primary" href="{{ url_for('home') }}">⌂ Voltar ao início</a></div></div>
   </div>
   <p id="race-status" class="race-status" role="status">Um anel vale 10 pontos. Uma descoberta vale 25!</p>
-  <div class="steering"><button id="left" type="button" aria-label="Mover para a esquerda" disabled>← <span>Esquerda</span></button><span class="steering-tip">Pegue anéis.<br>Desvie dos troncos!</span><button id="right" type="button" aria-label="Mover para a direita" disabled><span>Direita</span> →</button></div>
+  <div class="steering"><button id="left" type="button" aria-label="Mover para a esquerda" disabled>← <span>Esquerda</span></button><button id="jump" type="button" aria-label="Pular; atalho: barra de espaço na pista" disabled>↑ <span>Pular</span></button><button id="right" type="button" aria-label="Mover para a direita" disabled><span>Direita</span> →</button></div>
   <noscript><p class="game-hint">Para controlar a corrida, é necessário habilitar JavaScript no navegador. Peça ajuda a um adulto.</p></noscript>
-  <p class="game-hint">Sem perder vidas ou anéis. Ao esbarrar, o Sonic apenas diminui o passo.</p>
+  <p class="game-hint">Espaço ou Pular: salte por cima de tudo. Anéis pulados não são coletados. Ao esbarrar, o Sonic apenas diminui o passo.</p>
 </section>
 {% endblock %}

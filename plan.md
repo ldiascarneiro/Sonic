@@ -127,3 +127,13 @@ perguntas originais até terminar; voltar ao início e iniciar outra aplica a mu
   movimento reduzido, dez anéis e três respostas com alvos maiores que 48 px.
 - [ ] Validar a nova versão no Railway e em celular físico; a conferência local de
   layout usou templates estáticos, sem executar a corrida no navegador.
+
+## Salto em bola
+
+- [x] Espaço na pista e botão Pular no toque iniciam salto de um segundo.
+- [x] Bola passa sobre troncos e anéis sem coletar objetos no ar.
+- [x] Sem pulo duplo; respeita pausas, quizzes e movimento reduzido.
+- [x] Validar 14 testes Python e 13 JavaScript, incluindo pouso e passagem sobre objetos.
+- [x] Verificar no Chrome local em 1280 e 360 px: Espaço, botão Pular, pausa/retomada,
+  movimento reduzido, ausência de erros JavaScript e alvos de toque de pelo menos 48 px.
+- [ ] Publicar e validar o salto no Railway e em celular físico.

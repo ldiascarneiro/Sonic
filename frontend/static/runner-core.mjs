@@ -1,7 +1,13 @@
 // Simulação sem DOM, testável. Pontos são recreativos e locais, sem ranking.
 export const SEGMENT_SECONDS = 18;
+export const JUMP_SECONDS = 1;
+export function jump(state) {
+  if (state.checkpoint || state.jumpRemaining > 0) return false;
+  state.jumpRemaining = JUMP_SECONDS;
+  return true;
+}
 export function newRace() {
-  return {lane: 1, elapsed: 0, spawnAt: 0.8, objects: [], rings: 0, score: 0, slow: 0, row: 0, checkpoint: false};
+  return {lane: 1, elapsed: 0, spawnAt: 0.8, objects: [], rings: 0, score: 0, slow: 0, row: 0, checkpoint: false, jumpRemaining: 0};
 }
 export function steer(state, direction) {
   state.lane = Math.max(0, Math.min(2, state.lane + direction));
@@ -11,6 +17,7 @@ export function nextSegment(state) {
   state.spawnAt = 0.8;
   state.objects = [];
   state.slow = 0;
+  state.jumpRemaining = 0;
   state.checkpoint = false;
 }
 export function advance(state, dt) {
@@ -38,7 +45,10 @@ export function advance(state, dt) {
     item.progress += travel / 4.2;
     if (!item.resolved && before < 0.86 && item.progress >= 0.86) {
       item.resolved = true;
-      if (item.lane === state.lane) {
+      // Usa o instante da passagem, inclusive quando o pouso ocorre neste quadro.
+      const crossingTime = dt * (0.86 - before) / (item.progress - before);
+      const airborne = state.jumpRemaining > crossingTime;
+      if (item.lane === state.lane && !airborne) {
         item.collected = true;
         if (item.kind === 'ring') {
           state.rings += 1;
@@ -52,5 +62,6 @@ export function advance(state, dt) {
     }
   }
   state.objects = state.objects.filter(item => item.progress < 1.12 && !item.collected);
+  state.jumpRemaining = Math.max(0, state.jumpRemaining - dt);
   return events;
 }

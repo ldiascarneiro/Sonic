@@ -73,7 +73,7 @@ O único modo é `numbers`; cores, formas e o modo misto são rejeitados pela AP
 
 - Atividades curtas, três escolhas por vez, sem limite de tempo.
 - Corrida real com troca de faixa, obstáculos e coleta; cinco checkpoints educativos.
-- Setas esquerda/direita e botões grandes de toque; sem salto obrigatório.
+- Setas esquerda/direita e botões grandes de toque; salto opcional por Espaço ou toque em Pular.
 - Colisão desacelera, sem retirar pontos ou vidas.
 - Sem JavaScript, a página explica que ele é necessário para controlar a corrida.
 - Páginas informativas não são painéis administrativos autenticados.
@@ -100,3 +100,8 @@ Somente adicionar persistência se surgir uma necessidade explícita. Controles
 sensíveis exigirão autenticação de responsáveis, autorização, retenção definida e
 armazenamento de estado no servidor. Evitar adicionar coleta de dados da criança
 como requisito implícito para atividades educativas.
+
+O salto dura um segundo na simulação e ignora a interação com todos os objetos
+que cruzarem o jogador durante esse intervalo, inclusive anéis. A colisão usa
+o instante de passagem dentro do quadro para tratar o pouso. A bola é desenhada
+localmente no canvas; movimento reduzido preserva a mecânica sem rotação.

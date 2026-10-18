@@ -1,3 +1,28 @@
+// Bola de espinhos durante o salto; sem rotação com movimento reduzido.
+export function drawSonicBall(ctx, {x, ground, progress, reduced = false}) {
+  const height = Math.sin(Math.PI * progress) * (reduced ? 65 : 125);
+  ctx.save();
+  ctx.fillStyle = '#25465d33';
+  ctx.beginPath(); ctx.ellipse(x, ground + 2, 38 - height * .1, 8, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.translate(x, ground - 48 - height);
+  if (!reduced) ctx.rotate(progress * Math.PI * 4);
+  ctx.fillStyle = '#1554d6'; ctx.strokeStyle = '#123fa9'; ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let i = 0; i < 24; i++) {
+    const angle = i * Math.PI / 12;
+    const radius = i % 2 ? 36 : 47;
+    const px = Math.cos(angle) * radius, py = Math.sin(angle) * radius;
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#2475f2'; ctx.beginPath(); ctx.arc(0, 0, 35, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#8cbeff'; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.arc(0, 0, 24, -.8, 2.2); ctx.stroke();
+  ctx.strokeStyle = '#1554d6';
+  ctx.beginPath(); ctx.arc(0, 0, 13, 1, 4.8); ctx.stroke();
+  ctx.restore();
+}
+
 // Personagem vetorial articulado, visto de costas. Sem imagens externas.
 export function drawSonicRunner(ctx, {x, ground, time, lean = 0, reduced = false}) {
   const cycle = reduced ? 0 : time * 14;

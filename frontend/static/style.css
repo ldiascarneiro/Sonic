@@ -77,3 +77,6 @@
 .counting-rings { display: grid; grid-template-columns: repeat(5, 32px); justify-content: center; gap: 14px; margin: 20px auto; }
 .counting-rings .ring { width: 32px; height: 40px; border-width: 6px; }
 @media (max-width: 760px) { .activity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .activity-grid article { padding: 14px; } .activity-grid h3 { font-size: 18px; } .activity-grid p { font-size: 13px; } }
+
+.steering #jump { background: #2056c9; color: white; }
+@media (max-width:760px) { .steering button { min-width: 0; } }

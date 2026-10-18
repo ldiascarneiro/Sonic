@@ -1,5 +1,5 @@
-import {newRace, steer, advance, nextSegment} from './runner-core.mjs?v=2';
-import {drawSonicRunner, drawSonicCheer} from './sonic-runner.mjs?v=4';
+import {newRace, steer, jump, JUMP_SECONDS, advance, nextSegment} from './runner-core.mjs?v=3';
+import {drawSonicRunner, drawSonicBall, drawSonicCheer} from './sonic-runner.mjs?v=5';
 import {GameAudio} from './game-audio.mjs';
 
 const root = document.querySelector('#runner-game');
@@ -21,6 +21,7 @@ let visualLean = 0;
 
 function controls() {
   $('#left').disabled = $('#right').disabled = phase !== 'running';
+  $('#jump').disabled = phase !== 'running';
   $('#pause').disabled = !['running', 'paused'].includes(phase);
   $('#pause').textContent = phase === 'paused' ? '▶ Continuar' : 'Ⅱ Pausar';
 }
@@ -32,6 +33,11 @@ function hud() {
 function focusRace() { canvas.focus({preventScroll: true}); }
 function move(direction) {
   if (phase === 'running') steer(state, direction);
+}
+function leap() {
+  if (phase === 'running' && jump(state)) {
+    $('#race-status').textContent = 'Sonic pulou! Passa por cima dos troncos e dos anéis.';
+  }
 }
 function pause() {
   if (phase !== 'running') return;
@@ -53,7 +59,14 @@ $('#pause').addEventListener('click', () => phase === 'paused' ? resume() : paus
 $('#resume').addEventListener('click', resume);
 $('#left').addEventListener('click', () => move(-1));
 $('#right').addEventListener('click', () => move(1));
+$('#jump').addEventListener('click', leap);
 document.addEventListener('keydown', event => {
+  // Preserva Espaço para ativar botões e links focados pelo teclado.
+  if (phase === 'running' && event.code === 'Space' &&
+      !event.target.closest('button, a, input, textarea, select, [contenteditable]')) {
+    event.preventDefault();
+    if (!event.repeat) leap();
+  }
   if (phase === 'running' && ['ArrowLeft', 'ArrowRight'].includes(event.key)) {
     event.preventDefault();
     if (!event.repeat) move(event.key === 'ArrowLeft' ? -1 : 1);
@@ -239,8 +252,13 @@ function draw() {
     }
   }
   const player = project(visualLane, 0.86);
-  drawSonicRunner(ctx, {x: player.x, ground: 490, time: state.elapsed,
-    lean: visualLean, reduced: reduced.matches});
+  if (state.jumpRemaining > 0) {
+    drawSonicBall(ctx, {x: player.x, ground: 490,
+      progress: 1 - state.jumpRemaining / JUMP_SECONDS, reduced: reduced.matches});
+  } else {
+    drawSonicRunner(ctx, {x: player.x, ground: 490, time: state.elapsed,
+      lean: visualLean, reduced: reduced.matches});
+  }
   if (state.slow > 0) {
     ctx.fillStyle = '#17294c'; ctx.font = 'bold 23px sans-serif'; ctx.textAlign = 'center';
     ctx.fillText('Opa! Vamos com calma.',450,45);
